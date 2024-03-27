@@ -187,9 +187,19 @@ function retry(func, attempts) {
  */
 function logger(func, logFunc) {
   return (...args) => {
-    logFunc(`${func.name}(${args}) starts`);
-    const result = func(args);
-    logFunc(`${func.name}(${args}) ends`);
+    let argLog = '';
+    args.forEach((arg) => {
+      argLog = argLog.concat(
+        Array.isArray(arg)
+          ? `[${arg.map((x) => (typeof x === 'string' ? `"${x}"` : `${x}`))}]`
+          : arg,
+        ','
+      );
+    });
+    argLog = argLog.substring(0, argLog.lastIndexOf(','));
+    logFunc(`${func.name}(${argLog}) starts`);
+    const result = func(...args);
+    logFunc(`${func.name}(${argLog}) ends`);
     return result;
   };
 }
